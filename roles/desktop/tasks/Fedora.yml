@@ -5,7 +5,14 @@
 
 # Since there is no dnf config-manager module yet, doing this manually.
 - name: Adding Sublime Repo
-  command: dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+  yum_repository:
+    name: sublime-text
+    description: Sublime Text - x86_64 - Stable
+    file: sublime-text
+    gpgcheck: yes
+    enabled: yes
+    baseurl: https://download.sublimetext.com/rpm/stable/x86_64
+    gpgkey: https://download.sublimetext.com/sublimehq-rpm-pub.gpg
 
 - name: Install Desktop Packages
   dnf:
@@ -19,3 +26,43 @@
     - keepassx # KeePass client
     - parcellite # Clipboard manager
     - autokey-qt # AutoKey system.
+
+- name: Installing PyCharm IDE Dependencies
+  dnf:
+    name: "{{ packages }}"
+    state: installed
+  vars:
+    packages:
+    - python2
+    - python3
+    - java-latest-openjdk
+
+- name: Downloading PyCharm
+  get_url: 
+    url: https://download.jetbrains.com/python/pycharm-professional-2019.1.1.tar.gz
+    dest: /opt/
+    checksum: sha256:68a05bb3f037caf5944d17d03aeabd2be34a07eedb164d77f0617d22cf919141
+
+- name: Checking /opt/PyCharm
+  file:
+    path: /opt/PyCharm
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+
+- name: UnZiping PyCharm Archive
+  unarchive:
+    src: /opt/pycharm-professional-2019.1.1.tar.gz
+    dest: /opt/
+  args: 
+    creates: /opt/pycharm-2019.1.1
+
+- name: Creating PyCharm SymLink
+  file: 
+    src: /opt/pycharm-2019.1.1/bin/pycharm.sh
+    dest: /usr/local/bin/charm
+    owner: root
+    group: root
+    mode: 0755
+    state: link
