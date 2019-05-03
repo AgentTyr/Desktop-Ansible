@@ -1,0 +1,11 @@
+- name: Install Basic Packages
+  dnf:
+    name: "{{ packages }}"
+    state: installed 
+  vars:
+    packages:
+    - gcc
+    - gdb
+    - vim
+    - screen
+    - python3

@@ -1,0 +1,21 @@
+- name: Importing Keys.
+  rpm_key:
+    state: present
+    key: https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+
+# Since there is no dnf config-manager module yet, doing this manually.
+- name: Adding Sublime Repo
+  command: dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+
+- name: Install Desktop Packages
+  dnf:
+    name: "{{ packages }}"
+    state: installed 
+  vars:
+    packages:
+    - sublime-text # Text Editor
+    - sublime-merge # Git Client.
+    - guake # Drop down terminal.
+    - keepassx # KeePass client
+    - parcellite # Clipboard manager
+    - autokey-qt # AutoKey system.

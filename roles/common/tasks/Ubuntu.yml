@@ -1,0 +1,11 @@
+- name: Install Basic Packages
+  apt:
+      name: "{{ packages }}"
+  vars:
+    packages:
+    - gcc
+    - gdb
+    - vim
+    - screen
+    - python3
+    - apt-transport-https

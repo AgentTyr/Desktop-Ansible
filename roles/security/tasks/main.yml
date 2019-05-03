@@ -1,26 +1,2 @@
-- name: Installing Dependencies
-  apt:
-      name: "{{ packages }}"
-  vars:
-    packages:
-    - default-jdk
-    - default-jre
-
-- name: Downloading Ghirda Archive
-  get_url: 
-    url: https://www.ghidra-sre.org/ghidra_9.0.2_PUBLIC_20190403.zip
-    dest: /opt/
-    checksum: sha256:10ffd65c266e9f5b631c8ed96786c41ef30e2de939c3c42770573bb3548f8e9f
-
-- name: Checking /opt/ghidra
-  file:
-    path: /opt/ghidra
-    state: directory
-    owner: root
-    group: root
-    mode: 0775
-
-- name: UnZiping Archive
-  unarchive:
-    src: /opt/ghidra_9.0.2_PUBLIC_20190403.zip
-    dest: /opt/ghidra
+- name: Include OS-specific variables.
+  include_tasks: "{{ ansible_distribution }}.yml"

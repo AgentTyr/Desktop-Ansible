@@ -1,11 +1,2 @@
-- name: Install Basic Packages
-  apt:
-      name: "{{ packages }}"
-  vars:
-    packages:
-    - gcc
-    - gdb
-    - vim
-    - screen
-    - python3
-    - apt-transport-https
+- name: Include OS-specific variables.
+  include_tasks: "{{ ansible_distribution }}.yml"
