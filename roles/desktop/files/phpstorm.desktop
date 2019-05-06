@@ -1,0 +1,5 @@
+Name=PHPStorm
+Comment=PHPStorm IDE
+Exec=/usr/local/bin/storm
+Type=Application
+Icon=/opt/PhpStorm-191.6707.66/bin/phpstorm.png

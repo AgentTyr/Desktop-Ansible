@@ -1,0 +1,5 @@
+Name=PyCharm
+Comment=PyCharm IDE
+Exec=/usr/local/bin/charm
+Type=Application
+Icon=/opt/pycharm-2019.1.1/bin/pycharm.png
