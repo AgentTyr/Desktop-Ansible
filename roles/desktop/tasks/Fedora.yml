@@ -16,26 +16,24 @@
 
 - name: Install Desktop Packages
   dnf:
-    name: "{{ packages }}"
+    name: "{{ item.name }}"
     state: installed 
-  vars:
-    packages:
-    - sublime-text # Text Editor
-    - sublime-merge # Git Client.
-    - guake # Drop down terminal.
-    - keepassx # KeePass client
-    - parcellite # Clipboard manager
-    - autokey-qt # AutoKey system.
+  with_items:
+    - { name: sublime-text }
+    - { name: sublime-merge }
+    - { name: guake }
+    - { name: keepassx }
+    - { name: parcellite }
+    - { name: autokey-qt }
 
 - name: Installing IDE Dependencies
   dnf:
-    name: "{{ packages }}"
+    name: "{{ item.name }}"
     state: installed
-  vars:
-    packages:
-    - python2
-    - python3
-    - java-latest-openjdk
+  with_items:
+    - { name: python2 }
+    - { name: python3 }
+    - { name: java-latest-openjdk }
 
 - name: Downloading JetBrain IDE's
   get_url: 
@@ -77,5 +75,5 @@
     group: root
     mode: 0644
   with_items:
-    - { src: files/phpstorm.desktop, dest: /usr/share/applications/phpstorm.desktop }
-    - { src: files/pycharm.desktop, dest: /usr/share/applications/pycharm.desktop }
+    - { src: files/phpstorm.desktop, dest: /usr/local/share/applications/phpstorm.desktop }
+    - { src: files/pycharm.desktop, dest: /usr/local/share/applications/pycharm.desktop }

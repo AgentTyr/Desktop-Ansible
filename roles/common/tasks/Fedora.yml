@@ -1,11 +1,10 @@
 - name: Install Basic Packages
   dnf:
-    name: "{{ packages }}"
+    name: "{{ item.name }}"
     state: installed 
-  vars:
-    packages:
-    - gcc
-    - gdb
-    - vim
-    - screen
-    - python3
+  with_items:
+    - { name: gcc }
+    - { name: gdb }
+    - { name: vim }
+    - { name: screen }
+    - { name: python3 }

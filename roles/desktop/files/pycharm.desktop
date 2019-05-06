@@ -1,5 +1,10 @@
-Name=PyCharm
-Comment=PyCharm IDE
-Exec=/usr/local/bin/charm
+[Desktop Entry]
+Version=1.0
 Type=Application
-Icon=/opt/pycharm-2019.1.1/bin/pycharm.png
+Name=PyCharm
+Icon=/opt/pycharm-2019.1.1/bin/pycharm.svg
+Exec="/opt/pycharm-2019.1.1/bin/pycharm.sh" %f
+Comment=Lightning-smart Python IDE
+Categories=Development;IDE;
+Terminal=false
+StartupWMClass=jetbrains-pycharm
