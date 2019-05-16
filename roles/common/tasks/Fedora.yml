@@ -8,3 +8,5 @@
     - { name: vim }
     - { name: screen }
     - { name: python3 }
+    - { name: strace }
+    - { name: ltrace }

@@ -33,26 +33,38 @@
   with_items:
     - { name: python2 }
     - { name: python3 }
+    - { name: libXScrnSaver } # For Postman 
     - { name: java-latest-openjdk }
 
-- name: Downloading JetBrain IDE's
+- name: Downloading Instalers
   get_url: 
     url: "{{ item.url }}"
     dest: /opt/
     checksum: "{{ item.checksum }}"
   with_items:
+    - { url: "https://dl.pstmn.io/download/version/7.0.9/linux64", checksum: "sha1:6A2EC4886F7B94C5AE2780EF49276F840596F755"}
     - { url: "https://download.jetbrains.com/python/pycharm-professional-2019.1.1.tar.gz", checksum: "sha256:68a05bb3f037caf5944d17d03aeabd2be34a07eedb164d77f0617d22cf919141"}
     - { url: "https://download.jetbrains.com/webide/PhpStorm-2019.1.1.tar.gz", checksum: "sha256:39500e7f605662b8d59af29c94f295cf978dc7e8b3ea060ec27106c9b9821c80" }
 
-- name: UnZipping Archives
+- name: UnZipping Postman
   unarchive:
-    src: "{{ item.src }}"
+    src: "/opt/Postman-linux-x64-7.0.9.tar.gz"
     dest: /opt/
-  with_items:
-    - {src: /opt/pycharm-professional-2019.1.1.tar.gz}
-    - {src: /opt/PhpStorm-2019.1.1.tar.gz}
   args: 
+    creates: /opt/Postman
+
+- name: UnZipping PyCharm
+  unarchive:
+    src: "/opt/pycharm-professional-2019.1.1.tar.gz"
+    dest: /opt/
+  args:
     creates: /opt/pycharm-2019.1.1
+
+- name: UnZipping PHPStorm
+  unarchive:
+    src: "/opt/PhpStorm-2019.1.1.tar.gz"
+    dest: /opt/
+  args: 
     creates: /opt/PhpStorm-191.6707.66
 
 - name: Creating SymLink
@@ -64,6 +76,7 @@
     mode: 0755
     state: link
   with_items:
+    - {src: /opt/Postman/app/Postman, dest: /usr/local/bin/postman}
     - {src: /opt/pycharm-2019.1.1/bin/pycharm.sh, dest: /usr/local/bin/charm}
     - {src: /opt/PhpStorm-191.6707.66/bin/phpstorm.sh, dest: /usr/local/bin/storm}
 
@@ -75,5 +88,6 @@
     group: root
     mode: 0644
   with_items:
+    - { src: files/postman.desktop, dest: /usr/local/share/applications/postman.desktop }
     - { src: files/phpstorm.desktop, dest: /usr/local/share/applications/phpstorm.desktop }
     - { src: files/pycharm.desktop, dest: /usr/local/share/applications/pycharm.desktop }
