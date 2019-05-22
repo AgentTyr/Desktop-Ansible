@@ -2,6 +2,9 @@
   rpm_key:
     state: present
     key: https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+  become: yes
+  become_method: sudo
+  become_user: root
 
 # Since there is no dnf config-manager module yet, doing this manually.
 - name: Adding Sublime Repo
@@ -13,6 +16,9 @@
     enabled: yes
     baseurl: https://download.sublimetext.com/rpm/stable/x86_64
     gpgkey: https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: Install Desktop Packages
   dnf:
@@ -25,6 +31,9 @@
     - { name: keepassx }
     - { name: parcellite }
     - { name: autokey-qt }
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: Installing IDE Dependencies
   dnf:
@@ -35,11 +44,23 @@
     - { name: python3 }
     - { name: libXScrnSaver } # For Postman 
     - { name: java-latest-openjdk }
+  become: yes
+  become_method: sudo
+  become_user: root
+
+- name: Create a directory if it does not exist
+  file:
+    path: "{{ lookup('env','HOME') }}{{ item.path }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - { path: "/opt/" }
+    - { path: "/bin/"}
 
 - name: Downloading Instalers
   get_url: 
     url: "{{ item.url }}"
-    dest: /opt/
+    dest: "{{ lookup('env','HOME') }}/opt/"
     checksum: "{{ item.checksum }}"
   with_items:
     - { url: "https://dl.pstmn.io/download/version/7.0.9/linux64", checksum: "sha1:6A2EC4886F7B94C5AE2780EF49276F840596F755"}
@@ -49,45 +70,43 @@
 - name: UnZipping Postman
   unarchive:
     src: "/opt/Postman-linux-x64-7.0.9.tar.gz"
-    dest: /opt/
+    dest: "{{ lookup('env','HOME') }}/opt/"
   args: 
-    creates: /opt/Postman
+    creates: "{{ lookup('env','HOME') }}/opt/Postman"
 
 - name: UnZipping PyCharm
   unarchive:
-    src: "/opt/pycharm-professional-2019.1.1.tar.gz"
-    dest: /opt/
+    src: "{{ lookup('env','HOME') }}/opt/pycharm-professional-2019.1.1.tar.gz"
+    dest: "{{ lookup('env','HOME') }}/opt/"
   args:
-    creates: /opt/pycharm-2019.1.1
+    creates: "{{ lookup('env','HOME') }}/opt/pycharm-2019.1.1"
 
 - name: UnZipping PHPStorm
   unarchive:
-    src: "/opt/PhpStorm-2019.1.1.tar.gz"
-    dest: /opt/
+    src: "{{ lookup('env','HOME') }}/opt/PhpStorm-2019.1.1.tar.gz"
+    dest: "{{ lookup('env','HOME') }}/opt/"
   args: 
-    creates: /opt/PhpStorm-191.6707.66
+    creates: "{{ lookup('env','HOME') }}/opt/PhpStorm-191.6707.66"
 
 - name: Creating SymLink
   file: 
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: root
-    group: root
     mode: 0755
     state: link
   with_items:
-    - {src: /opt/Postman/app/Postman, dest: /usr/local/bin/postman}
-    - {src: /opt/pycharm-2019.1.1/bin/pycharm.sh, dest: /usr/local/bin/charm}
-    - {src: /opt/PhpStorm-191.6707.66/bin/phpstorm.sh, dest: /usr/local/bin/storm}
+    - {src: "{{ lookup('env','HOME') }}/opt/Postman/app/Postman", dest: "{{ lookup('env','HOME') }}/bin/postman"}
+    - {src: "{{ lookup('env','HOME') }}/opt/pycharm-2019.1.1/bin/pycharm.sh", dest: "{{ lookup('env','HOME') }}/bin/charm"}
+    - {src: "{{ lookup('env','HOME') }}/opt/PhpStorm-191.6707.66/bin/phpstorm.sh", dest: "{{ lookup('env','HOME') }}/bin/storm"}
 
 - name: Setting up Shortcuts
-  copy:
+  vars:
+    HOME: "{{ lookup('env','HOME') }}"
+  template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: root
-    group: root
     mode: 0644
   with_items:
-    - { src: files/postman.desktop, dest: /usr/local/share/applications/postman.desktop }
-    - { src: files/phpstorm.desktop, dest: /usr/local/share/applications/phpstorm.desktop }
-    - { src: files/pycharm.desktop, dest: /usr/local/share/applications/pycharm.desktop }
+    - { src: templates/postman.desktop.j2, dest: "{{ lookup('env','HOME') }}/.local/share/applications/postman.desktop" }
+    - { src: templates/phpstorm.desktop.j2, dest: "{{ lookup('env','HOME') }}/.local/share/applications/phpstorm.desktop" }
+    - { src: templates/pycharm.desktop.j2, dest: "{{ lookup('env','HOME') }}/.local/share/applications/pycharm.desktop" }

@@ -10,3 +10,6 @@
     - { name: python3 }
     - { name: strace }
     - { name: ltrace }
+  become: yes
+  become_method: sudo
+  become_user: root
